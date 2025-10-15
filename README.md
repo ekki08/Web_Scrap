@@ -24,12 +24,6 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-If you don't have `requirements.txt`, install manually:
-
-```powershell
-pip install requests beautifulsoup4
-```
-
 3. Run the example spider (from project root):
 
 ```powershell
