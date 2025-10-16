@@ -37,3 +37,4 @@ class Scheduler:
         Get current size of the queue
         """
         return len(self.queue)
+    

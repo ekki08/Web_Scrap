@@ -101,12 +101,13 @@ class BaseSpider:
         self.logger.info(f"✅ Spider '{self.name}' finished.")
     
 class KeywordSpider(BaseSpider):
-    def __init__(self, keyword="Trade", urls=None):
+    def __init__(self, keyword="trade", urls=None):
         super().__init__(keyword+"_spider")
         self.keyword = keyword.lower()
         self.start_urls = urls or [
-            "https://www.bbc.com/news",
-            "https://www.nytimes.com/section/health"
+            "https://economictimes.indiatimes.com/news/international/us/crypto-market-dips-below-4-trillion-today-why-crypto-down-today-october-14-btc-eth-bnb-sol-ada-all-in-red-9-of-the-top-10-coins-losing-value-will-fed-rate-cut-revive-the-market-heres-crypto-market-recovery-prediction/articleshow/124552676.cms?from=mdr",
+            "https://www.bbc.com/new",
+            "https://www.foxbusiness.com/markets/crypto-bloodbath-wipes-out-billions-signs-stabilization-emerge-says-expert"
         ]
 
     def start_requests(self):
@@ -116,9 +117,7 @@ class KeywordSpider(BaseSpider):
         soup = BeautifulSoup(html, "html.parser")
         text = soup.get_text(" ", strip=True).lower()
 
-        # check if keyword exists in the page text
         if self.keyword in text:
-            # you could also extract context (like nearby sentences)
             paragraphs = [
                 p.get_text(strip=True)
                 for p in soup.find_all("p")
@@ -128,7 +127,7 @@ class KeywordSpider(BaseSpider):
                 "url": url,
                 "keyword": self.keyword,
                 "count": text.count(self.keyword),
-                "paragraphs": paragraphs[:5],  # limit to 5 samples
+                "paragraphs": paragraphs[:5], 
             }
             self.logger.info(f"Found '{self.keyword}' {result['count']} times in {url}")
             return result
@@ -137,5 +136,24 @@ class KeywordSpider(BaseSpider):
             return None
 
 if __name__ == "__main__":
-    spider = KeywordSpider(keyword="Trade")
+    spider = KeywordSpider(keyword="trade")
     spider.run()
+
+
+# -----------------------------
+# Test helper (requested to be in this file)
+# Note: pytest collects tests from files named `test_*.py`; a proper test file
+# is also created under `tests/` for automated runs.
+def test_add_and_get():
+    """Simple test for core.scheduler.Scheduler as requested.
+
+    This lives here per your request but there's also a formal test under
+    `tests/test_scheduler.py` so `pytest` will discover it automatically.
+    """
+    from core.scheduler import Scheduler
+
+    s = Scheduler()
+    s.add_url("https://a")
+    s.add_url("https://a")
+    assert s.size() == 1
+    assert s.get_next_url() == "https://a"
